@@ -114,6 +114,11 @@ public:
 };
 
 
+// 1. min no nodes 
+// dominatoion 
+
+// a b 
+
 class PairedDominationInChordalNipartiteGraphs
 {
 
@@ -124,10 +129,18 @@ public:
 
 
 private:
+/*
+D[v] = 1 -> v is dominated
+l - 0 1 2
+l[v] = 1 -> v is part of ans but not yet found its pair
+l[v] = 2 -> v is part of ans we found edge
+
+ans - 4 5 , 6 9
+*/
     vector<int> tFunction, sFunction, order, fFunction, D, L, visited;
-    vector<vector<int>> sortedNeighboursList;
+    vector<vector<int>> sortedNeighboursList; // sorted based on elimination order
     int currentVertex;
-    vector<pair<int, int>> pairedDominationEdge;
+    vector<pair<int, int>> pairedDominationEdge; // storing ans
 
 
 public:
@@ -138,6 +151,8 @@ public:
             order[eliminationOrder[i]] = i;
         }
     }
+
+
 
 
     void sortTheNeighboursList()
@@ -185,6 +200,17 @@ public:
     }
 
 
+/*
+1. going through the neighbour nodes of current vertex which are sorted based on WEO
+2. if it is not visited and degree is 1 and it is there in our result but we didnt find mate for it then 
+   we will add it to T funcion
+3. if node is after current vertex in elimination order and we are searching for mate then we add to S function
+*/
+
+// T function : it contains vertices that are not visited and having degree 1 and added in out solution and finding for mate
+
+
+//order[c] => index of c in elimination order
     void calculateTAndSFunction(int i)
     {
         tFunction.clear();
@@ -195,15 +221,19 @@ public:
             {
                 tFunction.push_back(c);
             }
+
             if (order[c] > i && L[c] == 1)
             {
-
-
                 sFunction.push_back(c);
             }
         }
     }
 
+
+/*
+1. go through the neighbour nodes of current vertex 
+2. check if node is not visited , degree is one and node is not dominated till now return true else false
+*/
 
     bool noVertexWithDegreeWithD(int i)
     {
@@ -217,7 +247,14 @@ public:
         return false;
     }
 
+    //note : function 
 
+
+ 
+/*
+1. go through the neighbour nodes of current vertex 
+2. check if node is not visited , degree is one then  return true else false
+*/
     bool noVertexWithDegree(int i)
     {
         for (auto c : sortedNeighboursList[eliminationOrder[i]])
@@ -253,18 +290,35 @@ public:
     {
         int n = CBG->getNodes();
 
-
+// 4 -> 5 6 7
         for (int i = 0; i < n; i++)
         {
             currentVertex = eliminationOrder[i];
             calculateTAndSFunction(i);
+
             if (D[currentVertex] == 0 && !noVertexWithDegreeWithD(i))
             {
+
+                /*
+                 fFunction[currentVertex] = neighbours list of current vertex ki last element(with highest degree)
+                L[fFunction[currentVertex]] = 1 -> we are adding node to our pd but did not find any edge corresponding to it
+                */
+
                 L[fFunction[currentVertex]] = D[fFunction[currentVertex]] = 1;
                 markNeighboursCovered(fFunction[currentVertex]);
             }
             else if (L[currentVertex] == 0 && noVertexWithDegree(i))
             {
+                // T function : it contains vertices that are not visited and having degree 1 and added in out solution and finding for mate
+// 4 -> 5 6 7
+// t  -> 5 (not visited , not domination and having only edge with 5)
+// 5 -> 7 8 3 
+// 5 , 3
+
+//d[curren] = 1
+//l[curre] = 0 
+// dominate ayyundachu avvakpoyindu degree 1
+// 
                 if (tFunction.size() > 0)
                 {
                     for (auto s : tFunction)
@@ -275,6 +329,7 @@ public:
                             {
                                 makePairedDominationEdge(s, sortedNeighboursList[s][j]);
                                 markNeighboursCovered(sortedNeighboursList[s][j]);
+                                markNeighboursCovered(s);
                                 break;
                             }
                         }
@@ -286,48 +341,57 @@ public:
                     markNeighboursCovered(currentVertex);
                 }
             }
+  
+
+
 
 
             if (L[currentVertex] == 1)
             {
+                  //S function  : we included nodes such that they are part of pd but not found mate and their order is next in eo
+//part of ans + degree 1 + not visited
                 if (sFunction.size() > 0)
                 {
-                    if (tFunction.size() > 0)
-                    {
-                        makePairedDominationEdge(currentVertex, sFunction[0]);
-                        for (int j = 1; j < (int)tFunction.size(); j++)
-                        {
-                            makePairedDominationEdge(sortedNeighboursList[tFunction[j]][0], tFunction[j]);
-                        }
-                    }
-                    else
-                    {
-                        makePairedDominationEdge(currentVertex, sFunction[0]);
-                    }
+
+                    // part of ans
+                    // 2 3
+                     makePairedDominationEdge(currentVertex, sFunction[0]);
+//                     if (tFunction.size() > 0)
+//                     {
+
+// // l[c] = 1
+//                         // explicit ga degree 1
+//                         for (int j = 1; j < (int)tFunction.size(); j++)
+//                         {
+//                             makePairedDominationEdge(sortedNeighboursList[tFunction[j]][0], tFunction[j]);
+//                         }
+//                     }
                 }
                 else
                 {
-                    if (L[fFunction[currentVertex]] == 0)
-                    {
-                        makePairedDominationEdge(currentVertex, fFunction[currentVertex]);
-                        markNeighboursCovered(fFunction[currentVertex]);
-                    }
-                    else
-                    {
-                        L[currentVertex] = 2;
+                    // if (L[fFunction[currentVertex]] == 0)
+                    // {
+                    //     makePairedDominationEdge(currentVertex, fFunction[currentVertex]);
+                    //     markNeighboursCovered(fFunction[currentVertex]);
+                    //     markNeighboursCovered(currentVertex);
+                    // }
+                    // else
+                    // {
+                       
                         for (int j = sortedNeighboursList[currentVertex].size() - 1; j >= 0; j--)
                         {
 
 
                             if (order[sortedNeighboursList[currentVertex][j]] < i &&
-                                L[sortedNeighboursList[currentVertex][j]] == 0 &&
-                                D[sortedNeighboursList[currentVertex][j]] == 1)
+                                L[sortedNeighboursList[currentVertex][j]] == 0 )
                             {
                                 makePairedDominationEdge(currentVertex, sortedNeighboursList[currentVertex][j]);
+                                markNeighboursCovered(sortedNeighboursList[currentVertex][j]);
+                                
                                 break;
                             }
                         }
-                    }
+                    // }
                 }
             }
 
