@@ -1,66 +1,100 @@
-function parseTextData(textData: string): {
-    nodes: any;
-    edges: any;
-    labels: any;
-} {
-    const lines = textData.trim().split("\n");
-    const nodeCount = parseInt(lines[0]);
-    const edgeCount = parseInt(lines[1]);
-    let a = -580,b = -640;
+import type { Node } from "./DataHelper";
 
-    const parsedNodes: any = {};
-    const parsedEdges: any = {};
-    const labels: any = {
-        nodes: {},
+// function parseTextData(textData: string): {
+//     nodes: any;
+//     edges: any;
+//     labels: any;
+// } {
+//     const lines = textData.trim().split("\n");
+//     const { nodeCount, edgeCount } = getGraphCounts(lines);
+//     let a = -580, b = -640;
+
+//     let parsedNodes = createNodes(nodeCount, lines, a, b);
+//     const {parsedEdges , adjacencyList}= createEdges(nodeCount, lines, parsedNodes);
+//     const labels = createLabels(parsedNodes);
+//     parsedNodes = checkBipartiteAndColorNode(nodeCount ,adjacencyList , parsedNodes );
+
+//     return { nodes: parsedNodes, edges: parsedEdges, labels };
+// }
+
+function getGraphCounts(lines: string[]): { nodeCount: number; edgeCount: number } {
+    return {
+        nodeCount: parseInt(lines[0]),
+        edgeCount: parseInt(lines[1]),
     };
+}
 
-    const adjacencyList: number[][] = new Array(nodeCount)
+function getNodeId(nodeNumber : number){
+    return `node${nodeNumber}`;
+}
+function createNodes(nodeCount: number, lines: string[], a: number, b: number): any {
+    const parsedNodes: any = {};
+    let x = a, y = b;
+
+    for (let i = 2; i < lines.length; i++) {
+        const [source, target] = lines[i].split(" ").map((num) => parseInt(num));
+
+        const sourceNode = getNodeId(source);
+        const targetNode = getNodeId(target);
+
+        if (!parsedNodes[sourceNode]) {
+            parsedNodes[sourceNode] = createNodeObject(source, x+140, 0);
+            x += 120;
+        }
+        if (!parsedNodes[targetNode]) {
+            parsedNodes[targetNode] = createNodeObject(target, y+80, 200);
+            y += 80;
+        }
+    }
+
+    return parsedNodes;
+}
+
+function createNodeObject(nodeNumber: number, x: number=0, y: number=0): Node {
+    return {
+        name: `Node ${nodeNumber}`,
+        size: 24,
+        nodeNo: `${nodeNumber}`,
+        color : "blue",
+        x,
+        y,
+    };
+}
+
+function createEdges(nodeCount: number, lines: string[]): any {
+    const parsedEdges: any = {};
+      const adjacencyList: number[][] = new Array(nodeCount)
         .fill(null)
         .map(() => []);
 
     for (let i = 2; i < lines.length; i++) {
-        const [source, target] = lines[i]
-            .split(" ")
-            .map((num) => parseInt(num));
-
-        const sourceNode = `node${source}`;
-        const targetNode = `node${target}`;
-
-        if (!parsedNodes[sourceNode]) {
-            parsedNodes[sourceNode] = {
-                name: `Node ${source}`,
-                size: 24,
-                nodeNo: ` ${source}`,
-            };
-            labels["nodes"][sourceNode] = {
-                x: a + 120,
-                y: 0,
-            };
-            a += 120;
-        }
-        if (!parsedNodes[targetNode]) {
-            parsedNodes[targetNode] = {
-                name: `Node ${target}`,
-                size: 24,
-                nodeNo: ` ${target}`,
-            };
-            labels["nodes"][targetNode] = {
-                x: b + 80,
-                y: 240,
-            };
-
-            b += 80;
-        }
+        const [source, target] = lines[i].split(" ").map((num) => parseInt(num));
+        const sourceNode = getNodeId(source);
+        const targetNode = getNodeId(target);
 
         const edgeKey = `edge${i - 1}`;
         parsedEdges[edgeKey] = { source: sourceNode, target: targetNode };
 
-        // Add edges to adjacency list for BFS
         adjacencyList[source].push(target);
         adjacencyList[target].push(source); // Assuming it's an undirected graph
     }
 
-    const colors: string[] = new Array(nodeCount).fill("");
+    return {parsedEdges , adjacencyList};
+}
+
+function createLabels(parsedNodes: any): any {
+    const labels: any = { nodes: {} };
+    for (const node in parsedNodes) {
+        labels.nodes[node] = { x: parsedNodes[node].x, y: parsedNodes[node].y };
+    }
+    return labels;
+}
+
+// export { parseTextData };
+
+
+function checkBipartiteAndColorNode(nodeCount:number , adjacencyList:number[][] , parsedNodes:any){
+      const colors: string[] = new Array(nodeCount).fill("");
 
     const bfs = (node: number) => {
         const queue: number[] = [];
@@ -103,7 +137,26 @@ function parseTextData(textData: string): {
             : "blue";
     }
 
+    return parsedNodes;
+
+}
+
+
+function parseTextData(textData: string): {
+    nodes: any;
+    edges: any;
+    labels: any;
+} {
+    let a = -580,b = -640;
+    const lines = textData.trim().split("\n");
+     const { nodeCount, edgeCount } = getGraphCounts(lines);  
+const {parsedEdges , adjacencyList}= createEdges(nodeCount, lines);
+let parsedNodes: any = createNodes(nodeCount , lines , a , b);
+parsedNodes = checkBipartiteAndColorNode(nodeCount , adjacencyList , parsedNodes);
+const labels = createLabels(parsedNodes);
+
     return { nodes: parsedNodes, edges: parsedEdges, labels };
 }
 
-export {parseTextData};
+export {parseTextData , createEdges , createNodeObject , createNodes , getNodeId};
+

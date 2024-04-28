@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, defineProps, reactive, computed } from "vue";
-import * as vNG from "v-network-graph";
 import { parseTextData } from "./FunctionHelper";
 import data from "./DataHelper";
 import type { Node, Edge } from "./DataHelper";
+import EliminationOrder from "./EliminationOrder.vue";
 
 const nodes = ref<Record<string, Node>>({ ...data.nodes });
 const edges = ref<Record<string, Edge>>({ ...data.edges });
@@ -27,9 +27,9 @@ watch(
         edges.value = updatedEdges;
         layouts.value = labels;
 
-        console.log("nodes : ", nodes.value);
-        console.log("edges : ", edges.value);
-        console.log("layputs : ", layouts.value);
+        console.log("nodes1 : ", nodes.value);
+        console.log("edges1 : ", edges.value);
+        console.log("layputs1 : ", layouts.value);
     }
 );
 
@@ -59,6 +59,8 @@ const computedEdges = computed(() => edges);
             >
         </template>
     </v-network-graph>
+
+    <elimination-order :text-data="textData" />
 </template>
 
 <style>

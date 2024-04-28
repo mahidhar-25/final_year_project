@@ -14,6 +14,7 @@ const inputText = ref("");
 const textDataProp = ref("");
 
 const passTextData = () => {
+    console.log(inputText);
     textDataProp.value = inputText.value;
 };
 </script>
