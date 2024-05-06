@@ -60,7 +60,7 @@ const computedEdges = computed(() => edges);
         </template>
     </v-network-graph>
 
-    <elimination-order :text-data="textData" />
+    <!-- <elimination-order :text-data="textData" /> -->
 </template>
 
 <style>

@@ -111,6 +111,8 @@ public:
         }
         return order;
     }
+
+
 };
 
 
@@ -289,8 +291,6 @@ public:
     void calculatePairedDomination()
     {
         int n = CBG->getNodes();
-
-// 4 -> 5 6 7
         for (int i = 0; i < n; i++)
         {
             currentVertex = eliminationOrder[i];
@@ -310,15 +310,6 @@ public:
             else if (L[currentVertex] == 0 && noVertexWithDegree(i))
             {
                 // T function : it contains vertices that are not visited and having degree 1 and added in out solution and finding for mate
-// 4 -> 5 6 7
-// t  -> 5 (not visited , not domination and having only edge with 5)
-// 5 -> 7 8 3 
-// 5 , 3
-
-//d[curren] = 1
-//l[curre] = 0 
-// dominate ayyundachu avvakpoyindu degree 1
-// 
                 if (tFunction.size() > 0)
                 {
                     for (auto s : tFunction)
