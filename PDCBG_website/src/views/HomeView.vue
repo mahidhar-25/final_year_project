@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, defineProps, reactive, computed } from "vue";
-import { parseTextData } from "./FunctionHelper";
+import { parseTextDataWithoutCheck } from "./FunctionHelper";
 import data from "./DataHelper";
 import type { Node, Edge } from "./DataHelper";
 import EliminationOrder from "./EliminationOrder.vue";
@@ -22,7 +22,7 @@ watch(
             nodes: updatedNodes,
             edges: updatedEdges,
             labels,
-        } = parseTextData(newValue);
+        } = parseTextDataWithoutCheck(newValue);
         nodes.value = updatedNodes;
         edges.value = updatedEdges;
         layouts.value = labels;

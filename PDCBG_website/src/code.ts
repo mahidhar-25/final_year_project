@@ -77,4 +77,141 @@ C++ code for finding a weak elimination order :
 
 `;
 
-export  {eliminationOrderCode};
+
+const takeGraphDataCode : String = `
+
+C++ code for taking graph data class 
+
+class Graph
+{
+public:
+    vector<vector<int>> graph;
+    vector<int> degree;
+
+
+private:
+    int nodes, edges;
+
+
+public:
+    Graph(int nodes = 0, int edges = 0)
+    {
+        this->nodes = nodes;
+        this->edges = edges;
+        this->graph.resize(nodes);
+        this->degree.resize(nodes);
+    }
+
+
+    void takeGraphData()
+    {
+
+
+        for (int i = 0; i < this->edges / 2; i++)
+        {
+            int first_node, second_node;
+            cin >> first_node >> second_node;
+            this->graph[first_node].push_back(second_node);
+            this->graph[second_node].push_back(first_node);
+            this->degree[first_node]++;
+            this->degree[second_node]++;
+        }
+    }
+
+
+    vector<vector<int>> getGraph()
+    {
+        return graph;
+    }
+
+
+    void setGraph(vector<vector<int>> graph)
+    {
+        this->graph = graph;
+    }
+
+
+    int getNodes()
+    {
+        return nodes;
+    }
+
+
+    int getEdges()
+    {
+        return edges;
+    }
+
+
+    void setNodes(int nodes)
+    {
+        this->nodes = nodes;
+    }
+    void setEdges(int edges)
+    {
+        this->edges = edges;
+    }
+};
+
+
+Typescript : 
+
+class Graph {
+    public graph: number[][];
+    public degree: number[];
+
+    private nodes: number;
+    private edges: number;
+
+    constructor(nodes = 0, edges = 0) {
+        this.nodes = nodes;
+        this.edges = edges;
+        this.graph = Array.from({length: nodes}, () => []);
+        this.degree = Array(nodes).fill(0);
+    }
+
+    setConstructorValues(nodes:number , edges:number){
+        this.nodes = nodes;
+        this.edges = edges;
+        this.graph = Array.from({length: nodes}, () => []);
+        this.degree = Array(nodes).fill(0);
+    }
+
+    public takeGraphData(input: string) {
+        const lines = input.split('\n');
+         this.setConstructorValues(Number(lines[0]) , Number(lines[1]));
+        for (let i = 2; i < lines.length; i++) {
+            const [first_node, second_node] = lines[i].split(' ').map(Number);
+            this.graph[first_node].push(second_node);
+            this.graph[second_node].push(first_node);
+            this.degree[first_node]++;
+            this.degree[second_node]++;
+        }
+    }
+
+    public getGraph(): number[][] {
+        return this.graph;
+    }
+
+    public setGraph(graph: number[][]): void {
+        this.graph = graph;
+    }
+
+    public getNodes(): number {
+        return this.nodes;
+    }
+
+    public getEdges(): number {
+        return this.edges;
+    }
+
+    public setNodes(nodes: number): void {
+        this.nodes = nodes;
+    }
+
+    public setEdges(edges: number): void {
+        this.edges = edges;
+    }
+}
+`;
+export  {eliminationOrderCode , takeGraphDataCode};

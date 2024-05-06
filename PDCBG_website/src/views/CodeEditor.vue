@@ -1,6 +1,6 @@
 <template>
     <div class="codeEditor">
-        <textarea v-model="content" id="editor"></textarea>
+        <textarea v-model="content" :id="id"></textarea>
     </div>
 </template>
 
@@ -18,10 +18,14 @@ export default {
             type: String,
             required: true,
         },
+        propid: {
+            type: String,
+            required: true,
+        },
     },
     mounted() {
         const editor = CodeMirror.fromTextArea(
-            document.getElementById("editor"),
+            document.getElementById(this.id),
             {
                 lineNumbers: true,
                 mode: "javascript",
@@ -41,6 +45,7 @@ export default {
     data() {
         return {
             content: this.code,
+            id: this.propid,
         };
     },
 };

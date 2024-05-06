@@ -38,12 +38,12 @@ function createNodes(nodeCount: number, lines: string[], a: number, b: number): 
         const targetNode = getNodeId(target);
 
         if (!parsedNodes[sourceNode]) {
-            parsedNodes[sourceNode] = createNodeObject(source, x+140, 0);
-            x += 120;
+            parsedNodes[sourceNode] = createNodeObject(source, x+75, 0);
+            x += 75;
         }
         if (!parsedNodes[targetNode]) {
-            parsedNodes[targetNode] = createNodeObject(target, y+80, 200);
-            y += 80;
+            parsedNodes[targetNode] = createNodeObject(target, y+60, 200);
+            y += 60;
         }
     }
 
@@ -111,7 +111,6 @@ function checkBipartiteAndColorNode(nodeCount:number , adjacencyList:number[][] 
                     colors[neighbor] =
                         colors[current] === "blue" ? "pink" : "blue"; // Alternate colors for bipartite graph
                 } else if (colors[neighbor] === colors[current]) {
-                    // Not a bipartite graph
                     return false;
                 }
             }
@@ -137,26 +136,43 @@ function checkBipartiteAndColorNode(nodeCount:number , adjacencyList:number[][] 
             : "blue";
     }
 
-    return parsedNodes;
+    return {parsedNodes , isBipartite} ;
 
 }
 
 
-function parseTextData(textData: string): {
+
+function checkBipartite(textData: string): {
+    nodes: any;
+    edges: any;
+    labels: any;
+    isBipartite : boolean
+} {
+    let a = -580,b = -640;
+    const lines = textData.trim().split("\n");
+     const { nodeCount, edgeCount } = getGraphCounts(lines);  
+const {parsedEdges , adjacencyList}= createEdges(nodeCount, lines);
+
+let {parsedNodes , isBipartite} = checkBipartiteAndColorNode(nodeCount , adjacencyList , createNodes(nodeCount , lines , a , b));
+const labels = createLabels(parsedNodes);
+
+    return { nodes: parsedNodes, edges: parsedEdges, labels , isBipartite };
+}
+
+function parseTextDataWithoutCheck(textData: string): {
     nodes: any;
     edges: any;
     labels: any;
 } {
     let a = -580,b = -640;
     const lines = textData.trim().split("\n");
-     const { nodeCount, edgeCount } = getGraphCounts(lines);  
-const {parsedEdges , adjacencyList}= createEdges(nodeCount, lines);
-let parsedNodes: any = createNodes(nodeCount , lines , a , b);
-parsedNodes = checkBipartiteAndColorNode(nodeCount , adjacencyList , parsedNodes);
-const labels = createLabels(parsedNodes);
+    const { nodeCount } = getGraphCounts(lines);  
+    const {parsedEdges }= createEdges(nodeCount, lines);
+    let parsedNodes: any = createNodes(nodeCount , lines , a , b);
+    const labels = createLabels(parsedNodes);
 
     return { nodes: parsedNodes, edges: parsedEdges, labels };
 }
 
-export {parseTextData , createEdges , createNodeObject , createNodes , getNodeId};
+export {checkBipartite , createEdges , createNodeObject , createNodes , getNodeId , parseTextDataWithoutCheck};
 
