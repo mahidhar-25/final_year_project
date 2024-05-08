@@ -1,5 +1,5 @@
 <template>
-    <div class="codeEditor">
+    <div>
         <textarea v-model="content" :id="id"></textarea>
     </div>
 </template>
@@ -46,6 +46,8 @@ export default {
         return {
             content: this.code,
             id: this.propid,
+            codeditorHieightClass: "codeEdior",
+            ediotrHeight: this.ediotrHeight,
         };
     },
 };
@@ -55,10 +57,25 @@ export default {
 <style scoped>
 .codeEditor {
     width: 100%;
-    max-height: 40vh;
+    max-height: 50vh;
     display: flex;
 
     align-items: start;
     align-content: start;
+}
+.CodeMirror {
+    border: 1px solid #eee;
+    height: auto;
+}
+.fullCodeEditor {
+    width: 100%;
+    height: auto;
+    display: flex;
+
+    align-items: start;
+    align-content: start;
+}
+CodeMirror-vscrollbar {
+    scrollbar-width: 2px !important; /* Adjust the width as needed */
 }
 </style>

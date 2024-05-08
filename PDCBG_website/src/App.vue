@@ -10,7 +10,7 @@ import GraphDefination from "./views/content/GraphDefination.vue";
 import CalculationSteps from "./views/CalculationSteps.vue";
 </script>
 
-<style scoped>
+<style>
 .main {
     max-width: 80vw;
     margin: 0 auto;

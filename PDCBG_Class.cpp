@@ -131,14 +131,7 @@ public:
 
 
 private:
-/*
-D[v] = 1 -> v is dominated
-l - 0 1 2
-l[v] = 1 -> v is part of ans but not yet found its pair
-l[v] = 2 -> v is part of ans we found edge
 
-ans - 4 5 , 6 9
-*/
     vector<int> tFunction, sFunction, order, fFunction, D, L, visited;
     vector<vector<int>> sortedNeighboursList; // sorted based on elimination order
     int currentVertex;
@@ -347,16 +340,16 @@ public:
                     // part of ans
                     // 2 3
                      makePairedDominationEdge(currentVertex, sFunction[0]);
-//                     if (tFunction.size() > 0)
-//                     {
+                    if (tFunction.size() > 0)
+                    {
 
-// // l[c] = 1
-//                         // explicit ga degree 1
-//                         for (int j = 1; j < (int)tFunction.size(); j++)
-//                         {
-//                             makePairedDominationEdge(sortedNeighboursList[tFunction[j]][0], tFunction[j]);
-//                         }
-//                     }
+// l[c] = 1
+                        // explicit ga degree 1
+                        for (int j = 1; j < (int)tFunction.size(); j++)
+                        {
+                            makePairedDominationEdge(sortedNeighboursList[tFunction[j]][0], tFunction[j]);
+                        }
+                    }
                 }
                 else
                 {

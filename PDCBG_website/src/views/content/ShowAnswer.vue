@@ -1,7 +1,13 @@
 <script lang="ts">
 import { nodes, edges, layouts, configs } from "./GraphDataHelper";
-import { parseTextDataWithoutCheck, checkBipartite } from "../FunctionHelper";
+import {
+    parseTextDataWithoutCheck,
+    checkBipartite,
+    getNodeId,
+} from "../FunctionHelper";
 import NetworkGraph from "./NetworkGraph.vue";
+import { PairedDominationInChordalNipartiteGraphs } from "../PDCBG_Class";
+import { ref } from "vue";
 
 export default {
     components: {
@@ -14,11 +20,12 @@ export default {
         },
     },
     setup(props) {
+        if (props.textData === "") return;
         const {
             nodes: updatedNodes,
             edges: updatedEdges,
             labels,
-        } = parseTextDataWithoutCheck(props.textData);
+        } = checkBipartite(props.textData);
         nodes.value = updatedNodes;
         edges.value = updatedEdges;
         layouts.value = labels;
@@ -37,17 +44,34 @@ export default {
             bipartiteLayouts: { ...layouts.value },
             bipartiteConfigs: { ...configs.value },
             isBipartite: false,
+            selectedNodes: ref<string[]>([]),
+            selectedEdges: ref<string[]>([]),
         };
     },
     methods: {
         LoadcheckBipartite() {
+            let g = new PairedDominationInChordalNipartiteGraphs(
+                this.$props.textData
+            );
+            let pairedDominationEdges = g.getPairedDominationEdge();
+
+            for (let pair of pairedDominationEdges) {
+                let a: string = getNodeId(pair[0]);
+                let b: string = getNodeId(pair[1]);
+                console.log(a, b);
+
+                this.selectedNodes.push(a);
+                this.selectedNodes.push(b);
+            }
             const {
                 nodes: updatedNodes,
                 edges: updatedEdges,
                 isBipartite: bipartiteStatus,
+                labels,
             } = checkBipartite(this.textData);
             this.bipartiteNode = updatedNodes;
             this.bipartiteEdges = updatedEdges;
+            this.bipartiteLayouts = labels;
             this.isBipartite = bipartiteStatus;
             console.log(this.bipartiteNode);
         },
@@ -56,29 +80,21 @@ export default {
 </script>
 
 <template>
-    <h3>Graph is generated</h3>
-    <NetworkGraph
-        id="step1GraphData"
-        class="graph"
-        :nodes="nodes"
-        :edges="edges"
-        :layouts="layouts"
-        :configs="configs"
-    />
-    <button @click="LoadcheckBipartite" class="margin">CheckBipartite</button>
+    <button @click="LoadcheckBipartite">calculate answer</button>
 
     <div v-if="isBipartite">
-        <h4 class="margin">Graph is Bipartite and Colors are updated</h4>
+        <h4>
+            we calculated the paired domination edges and heighlighting them
+        </h4>
         <NetworkGraph
             class="graph"
+            v-model:selected-nodes="selectedNodes"
+            v-model:selected-edges="selectedEdges"
             :nodes="bipartiteNode"
             :edges="bipartiteEdges"
-            :layouts="layouts"
+            :layouts="bipartiteLayouts"
             :configs="bipartiteConfigs"
         />
-    </div>
-    <div v-else>
-        <h4>Graph is not Bipartite</h4>
     </div>
 
     <!-- <elimination-order :text-data="textData" /> -->
@@ -89,9 +105,5 @@ export default {
     max-width: 80vw;
     height: 50vh;
     border: 1px solid #000;
-}
-
-.margin {
-    margin: 20px;
 }
 </style>

@@ -61,8 +61,9 @@ function createNodeObject(nodeNumber: number, x: number=0, y: number=0): Node {
     };
 }
 
-function createEdges(nodeCount: number, lines: string[]): any {
+function createEdges(nodeCount: number=0, lines: string[]): any {
     const parsedEdges: any = {};
+    console.log(nodeCount);
       const adjacencyList: number[][] = new Array(nodeCount)
         .fill(null)
         .map(() => []);
@@ -151,6 +152,7 @@ function checkBipartite(textData: string): {
     let a = -580,b = -640;
     const lines = textData.trim().split("\n");
      const { nodeCount, edgeCount } = getGraphCounts(lines);  
+     console.log(nodeCount);
 const {parsedEdges , adjacencyList}= createEdges(nodeCount, lines);
 
 let {parsedNodes , isBipartite} = checkBipartiteAndColorNode(nodeCount , adjacencyList , createNodes(nodeCount , lines , a , b));
